@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        canvas {
+            border: 2px solid #000;
+            display: block;
+            margin: 20px auto;
+        }
+
+        #resetBtn {
+            display: block;
+            margin: 20px auto;
+            padding: 8px 18px; /* Adjust padding to make the button bigger */
+            font-size: 15px;
+            border: 2px solid #333; 
+            background-color: #fff; 
+            cursor: pointer;
+        }
+
+        #bounceCount {
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+        }
+    </style>
+    <title>Bouncing Ball Game</title>
+</head>
+<body>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <div id="bounceCount">Bounces: 0</div>
+    <button id="resetBtn">Reset</button>
+
+    <script>
+        // Get the canvas element and context
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Ball properties
+        const ballRadius = 20;
+        let ballX = canvas.width / 2;
+        let ballY = canvas.height / 2;
+        let ballSpeedX = 5;
+        let ballSpeedY = 5;
+
+        // Bounce counter
+        let bounceCount = 0;
+
+        // Mouse click event listener
+        canvas.addEventListener('click', handleCanvasClick);
+
+        // Reset button event listener
+        const resetBtn = document.getElementById('resetBtn');
+        resetBtn.addEventListener('click', resetGame);
+
+        // Display bounce count
+        const bounceCountElement = document.getElementById('bounceCount');
+
+        // Main game loop
+        function update() {
+            // Move the ball
+            ballX += ballSpeedX;
+            ballY += ballSpeedY;
+
+            // Bounce off the canvas boundaries
+            if (ballX - ballRadius < 0 || ballX + ballRadius > canvas.width) {
+                ballSpeedX = -ballSpeedX;
+                bounceCount++;
+            }
+
+            if (ballY - ballRadius < 0 || ballY + ballRadius > canvas.height) {
+                ballSpeedY = -ballSpeedY;
+                bounceCount++;
+            }
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the ball
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = '#0095DD';
+            ctx.fill();
+            ctx.closePath();
+
+            // Update bounce count display
+            bounceCountElement.textContent = `Bounces: ${bounceCount}`;
+
+            // Request the next animation frame
+            requestAnimationFrame(update);
+        }
+
+        // Handle mouse click to set the ball position
+        function handleCanvasClick(event) {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
+
+            ballX = clickX;
+            ballY = clickY;
+        }
+
+        // Reset the game
+        function resetGame() {
+            ballX = canvas.width / 2;
+            ballY = canvas.height / 2;
+            ballSpeedX = 5;
+            ballSpeedY = 5;
+            bounceCount = 0;
+        }
+
+        // Start the game loop
+        update();
+    </script>
+</body>
+</html>
